@@ -36,6 +36,14 @@ describe "Trains" do
 
      @flatland.measure(["A", "B", "C", "D"]).should eq(false)
     end
+
+    it "should find a single 3 stop cycle " do
+     @flatland.add_edge "A", "B", 1
+     @flatland.add_edge "B", "C", 1
+     @flatland.add_edge "C", "A", 1
+
+     @flatland.max_stop_trip("A", "A", 3).should eq([["A","B","C","A"]])
+    end
   end
 
   context "in Kiwiland" do
@@ -75,12 +83,20 @@ describe "Trains" do
       @kiwiland.measure(["A", "E", "D"]).should eq(false)
     end
 
-    it "should measure the number of trips starting at C and ending at C with a maximum of 3 stops.  In the sample data below, there are two such trips: C-D-C (2 stops). and C-E-B-C (3 stops)" do
-      pending
+    it "should measure the number of trips starting at C and ending at C with a maximum of 3 stops. " do
+      # In the sample data below, there are two such trips: C-D-C (2 stops). and C-E-B-C (3 stops)
+
+      @kiwiland.max_stop_trip("C", "C", 3)
+        .should eq([["C","D","C",], ["C","E","B","C"]])
+
     end
 
-    it "should measure the number of trips starting at A and ending at C with exactly 4 stops.  In the sample data below, there are three such trips: A to C (via B,C,D); A to C (via D,C,D); and A to C (via D,E,B)" do
-      pending
+    it "should measure the number of trips starting at A and ending at C with exactly 4 stops. " do
+      @kiwiland.max_stop_trip_exact("A", "C", 4)
+        .should eq([["A","B","C","D","C"],
+                    ["A","D","C","D","C"],
+                    ["A","D","E","B","C"]])
+
     end
 
     it "should measure the length of the shortest route (in terms of distance to travel) from A to C" do

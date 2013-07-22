@@ -73,5 +73,36 @@ module Trains
       measure_ destinations.shift, destinations, 0
     end
 
+    def max_stop_trip_(trip_stops, trip_end, stops_left, exact)
+      # When there are no more stops left, stop looping
+      return [] if stops_left == 0
+
+      to_return = []
+
+      # For all the connected edges, repeat this process
+      @edges[trip_stops.last].each do |stop, cost|
+
+        # If this returns us to the start, we need to return it
+        to_return.push(trip_stops + [stop]) if stop == trip_end \
+                                           and (!exact or stops_left == 1)
+
+        # If any of the routes we can connect to through here hit, then
+        # add them to the return array
+        to_return += max_stop_trip_(trip_stops + [stop], trip_end, stops_left - 1, exact)
+      end
+
+      return to_return
+    end
+
+    def max_stop_trip(trip_start, trip_end, stops_left)
+      # By oddity of specification, a stop only counts if you transition to it
+      # To account for this, add one to the stop count for the loop
+      max_stop_trip_([trip_start], trip_end, stops_left, false)
+    end
+
+    def max_stop_trip_exact(trip_start, trip_end, stops_left)
+      max_stop_trip_([trip_start], trip_end, stops_left, true)
+    end
+
   end
 end

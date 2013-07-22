@@ -43,26 +43,36 @@ describe "Trains" do
     # (which is a large land-mass a few hundred km east of New Zealand )
     before(:all) do
       @kiwiland = Trains::Network.new
+
+      @kiwiland.add_edge "A", "B", 5
+      @kiwiland.add_edge "B", "C", 4
+      @kiwiland.add_edge "C", "D", 8
+      @kiwiland.add_edge "D", "C", 8
+      @kiwiland.add_edge "D", "E", 6
+      @kiwiland.add_edge "A", "D", 5
+      @kiwiland.add_edge "C", "E", 2
+      @kiwiland.add_edge "E", "B", 3
+      @kiwiland.add_edge "A", "E", 7
     end
 
     it "should measure the distance of the route A-B-C" do
-      pending
+      @kiwiland.measure(["A", "B", "C"]).should eq(9)
     end
 
     it "should measure the distance of the route A-D" do
-      pending
+      @kiwiland.measure(["A", "D"]).should eq(5)
     end
 
     it "should measure the distance of the route A-D-C" do
-      pending
+      @kiwiland.measure(["A", "D", "C"]).should eq(13)
     end
 
     it "should measure the distance of the route A-E-B-C-D" do
-      pending
+      @kiwiland.measure(["A", "E", "B", "C", "D"]).should eq(22)
     end
 
     it "should measure the distance of the route A-E-D" do
-      pending
+      @kiwiland.measure(["A", "E", "D"]).should eq(false)
     end
 
     it "should measure the number of trips starting at C and ending at C with a maximum of 3 stops.  In the sample data below, there are two such trips: C-D-C (2 stops). and C-E-B-C (3 stops)" do

@@ -105,7 +105,16 @@ module Trains
     end
 
     def shortest_route(trip_start, trip_end)
-      return []
+      # For small sets this is efficient. This could be revisited
+      # for speed's sake in the event that there are > 1000 nodes in a sample.
+      # Algorithms to use: Dijkstra, A*, D* or LP BFS with pruning heuristics
+      routes = []
+      depth = 2
+      while routes.length == 0
+        depth *= 2
+        routes = find_route_with_max_cost(trip_start, trip_end, depth)
+      end
+      return routes.max_by { |route_id, route| measure(route) }
     end
 
     def find_route_with_max_cost_(trip_stops, trip_end, cost_left)

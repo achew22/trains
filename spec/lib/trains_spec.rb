@@ -46,24 +46,22 @@ describe "Trains" do
     end
 
     it "should find a the shortest route between two points" do
-      pending
       @flatland.add_edge "A", "B", 1
       @flatland.add_edge "B", "C", 1
       @flatland.add_edge "C", "A", 1
 
-      @flatland.shortest_route("A", "A").should eq(["ABCA".split("")])
+      @flatland.shortest_route("A", "A").should eq("ABCA".split(""))
     end
 
     it "should find a the shortest route between two in a more complex maze" do
-      pending
       @flatland.add_edge "A", "B", 1
-      @flatland.add_edge "A", "C", 2
-      @flatland.add_edge "B", "C", 2
-      @flatland.add_edge "B", "D", 2
+      @flatland.add_edge "A", "C", 3
+      @flatland.add_edge "B", "C", 3
+      @flatland.add_edge "B", "D", 3
       @flatland.add_edge "C", "A", 1
-      @flatland.add_edge "C", "B", 2
+      @flatland.add_edge "C", "B", 3
 
-      @flatland.shortest_route("A", "A").should eq(["ABCA".split("")])
+      @flatland.shortest_route("A", "A").should eq("ABCA".split(""))
     end
 
     it "should find all paths less than a certain cost" do
@@ -133,15 +131,18 @@ describe "Trains" do
     end
 
     it "should measure the length of the shortest route (in terms of distance to travel) from A to C" do
-      pending
+      res = @kiwiland.shortest_route("A", "C")
+
+      @kiwiland.measure(res).should eq(9)
     end
 
     it "should measure the length of the shortest route (in terms of distance to travel) from B to B" do
-      pending
+      res = @kiwiland.shortest_route("B", "B")
+
+      @kiwiland.measure(res).should eq(9)
     end
 
     it "should measure the number of different routes from C to C with a distance of less than 30." do
-      #pending
       res = @kiwiland.find_route_with_max_cost("C", "C", 30)
       res.uniq.sort.should eq([
           "CDC".split(""),

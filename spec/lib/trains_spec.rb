@@ -20,29 +20,61 @@ describe "Trains" do
     it "should properly measure an edge" do
       @flatland.add_edge "A", "B", 1
 
-      @flatland.measure(["A", "B"]).should eq(1)
+      @flatland.measure("AB".split("")).should eq(1)
     end
 
     it "should properly measure multiple edges" do
-     @flatland.add_edge "A", "B", 1
-     @flatland.add_edge "B", "C", 1
+      @flatland.add_edge "A", "B", 1
+      @flatland.add_edge "B", "C", 1
 
-     @flatland.measure(["A", "B", "C"]).should eq(2)
+      @flatland.measure("ABC".split("")).should eq(2)
     end
 
     it "should behave as a monad and return false on no route" do
-     @flatland.add_edge "A", "B", 1
-     @flatland.add_edge "B", "C", 1
+      @flatland.add_edge "A", "B", 1
+      @flatland.add_edge "B", "C", 1
 
-     @flatland.measure(["A", "B", "C", "D"]).should eq(false)
+      @flatland.measure("ABCD".split("")).should eq(false)
     end
 
     it "should find a single 3 stop cycle " do
-     @flatland.add_edge "A", "B", 1
-     @flatland.add_edge "B", "C", 1
-     @flatland.add_edge "C", "A", 1
+      @flatland.add_edge "A", "B", 1
+      @flatland.add_edge "B", "C", 1
+      @flatland.add_edge "C", "A", 1
 
-     @flatland.max_stop_trip("A", "A", 3).should eq([["A","B","C","A"]])
+      @flatland.max_stop_trip("A", "A", 3).should eq(["ABCA".split("")])
+    end
+
+    it "should find a the shortest route between two points" do
+      pending
+      @flatland.add_edge "A", "B", 1
+      @flatland.add_edge "B", "C", 1
+      @flatland.add_edge "C", "A", 1
+
+      @flatland.shortest_route("A", "A").should eq(["ABCA".split("")])
+    end
+
+    it "should find a the shortest route between two in a more complex maze" do
+      pending
+      @flatland.add_edge "A", "B", 1
+      @flatland.add_edge "A", "C", 2
+      @flatland.add_edge "B", "C", 2
+      @flatland.add_edge "B", "D", 2
+      @flatland.add_edge "C", "A", 1
+      @flatland.add_edge "C", "B", 2
+
+      @flatland.shortest_route("A", "A").should eq(["ABCA".split("")])
+    end
+
+    it "should find all paths less than a certain cost" do
+      @flatland.add_edge "A", "B", 1
+      @flatland.add_edge "A", "C", 2
+      @flatland.add_edge "B", "C", 2
+      @flatland.add_edge "B", "D", 2
+      @flatland.add_edge "C", "A", 1
+      @flatland.add_edge "C", "B", 2
+
+      @flatland.find_route_with_max_cost("A", "C", 5)
     end
   end
 
@@ -64,38 +96,39 @@ describe "Trains" do
     end
 
     it "should measure the distance of the route A-B-C" do
-      @kiwiland.measure(["A", "B", "C"]).should eq(9)
+      @kiwiland.measure("ABC".split("")).should eq(9)
     end
 
     it "should measure the distance of the route A-D" do
-      @kiwiland.measure(["A", "D"]).should eq(5)
+      @kiwiland.measure("AD".split("")).should eq(5)
     end
 
     it "should measure the distance of the route A-D-C" do
-      @kiwiland.measure(["A", "D", "C"]).should eq(13)
+      @kiwiland.measure("ADC".split("")).should eq(13)
     end
 
     it "should measure the distance of the route A-E-B-C-D" do
-      @kiwiland.measure(["A", "E", "B", "C", "D"]).should eq(22)
+      @kiwiland.measure("AEBCD".split("")).should eq(22)
     end
 
     it "should measure the distance of the route A-E-D" do
-      @kiwiland.measure(["A", "E", "D"]).should eq(false)
+      @kiwiland.measure("AED".split("")).should eq(false)
     end
 
     it "should measure the number of trips starting at C and ending at C with a maximum of 3 stops. " do
       # In the sample data below, there are two such trips: C-D-C (2 stops). and C-E-B-C (3 stops)
 
       @kiwiland.max_stop_trip("C", "C", 3)
-        .should eq([["C","D","C",], ["C","E","B","C"]])
+        .should eq(["CDC".split(""),
+                    "CEBC".split("")])
 
     end
 
     it "should measure the number of trips starting at A and ending at C with exactly 4 stops. " do
       @kiwiland.max_stop_trip_exact("A", "C", 4)
-        .should eq([["A","B","C","D","C"],
-                    ["A","D","C","D","C"],
-                    ["A","D","E","B","C"]])
+        .should eq(["ABCDC".split(""),
+                    "ADCDC".split(""),
+                    "ADEBC".split("")])
 
     end
 
@@ -107,9 +140,19 @@ describe "Trains" do
       pending
     end
 
-
-    it "should measure the number of different routes from C to C with a distance of less than 30.  In the sample data, the trips are: CDC, CEBC, CEBCDC, CDCEBC, CDEBC, CEBCEBC, CEBCEBCEBC" do
+    it "should measure the number of different routes from C to C with a distance of less than 30." do
       pending
+
+      @flatland.find_route_with_max_cost("C", "C", 30).should eq([
+          "CDC".split(""),
+          "CEBC".split(""),
+          "CEBCDC".split(""),
+          "CDCEBC".split(""),
+          "CDEBC".split(""),
+          "CEBCEBC".split(""),
+          "CEBCEBCEBC".split("")
+        ])
+
     end
 
   end

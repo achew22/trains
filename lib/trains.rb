@@ -104,5 +104,34 @@ module Trains
       max_stop_trip_([trip_start], trip_end, stops_left, true)
     end
 
+    def shortest_route(trip_start, trip_end)
+      return []
+    end
+
+    def find_route_with_max_cost_(trip_stops, trip_end, cost_left)
+      # When there are no more stops left, stop looping
+      return [] if cost_left <= 0
+
+      to_return = []
+
+      # For all the connected edges, repeat this process
+      @edges[trip_stops.last].each do |stop, cost|
+
+        # If this returns us to the start, we need to return it
+        to_return.push(trip_stops + [stop]) if stop == trip_end \
+                                           and cost <  cost_left
+
+        # If any of the routes we can connect to through here hit, then
+        # add them to the return array
+        to_return += find_route_with_max_cost_(trip_stops + [stop], trip_end, cost_left - cost)
+      end
+
+      return to_return
+    end
+
+    def find_route_with_max_cost(trip_start, trip_end, max_cost)
+      find_route_with_max_cost_([trip_start], trip_end, max_cost)
+    end
+
   end
 end

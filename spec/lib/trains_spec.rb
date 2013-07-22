@@ -141,9 +141,9 @@ describe "Trains" do
     end
 
     it "should measure the number of different routes from C to C with a distance of less than 30." do
-      pending
-
-      @flatland.find_route_with_max_cost("C", "C", 30).should eq([
+      #pending
+      res = @kiwiland.find_route_with_max_cost("C", "C", 30)
+      res.uniq.sort.should eq([
           "CDC".split(""),
           "CEBC".split(""),
           "CEBCDC".split(""),
@@ -151,9 +151,10 @@ describe "Trains" do
           "CDEBC".split(""),
           "CEBCEBC".split(""),
           "CEBCEBCEBC".split("")
-        ])
+        ].uniq.sort)
 
     end
+
 
   end
 end
